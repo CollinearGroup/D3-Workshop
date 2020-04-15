@@ -11,6 +11,7 @@ class PieChart extends Component {
         this.canvas = React.createRef()
 
         this.state = {
+            marginRadius: -15,
             boundingRect: {},
             loaded: false,
         }
@@ -59,9 +60,7 @@ class PieChart extends Component {
             .append('svg')
             .attr('viewBox', [0, 0, width, height])
 
-        const radius = Math.min(height, width) / 2
         const center = { x: width / 2, y: height / 2 }
-        const arcPath = arc().outerRadius(radius).innerRadius(0)
 
         const graph = svg
             .append('g')
@@ -71,40 +70,50 @@ class PieChart extends Component {
             .sort(null)
             .value((d) => d.count)
 
-        const getPieChartData = (data) =>
-            pieChart(data).map((pieChartDatum) => {
-                pieChartDatum.data.center = arcPath.centroid(pieChartDatum)
-                pieChartDatum.data.center[0] += center.x
-                pieChartDatum.data.center[1] += center.y
-                return pieChartDatum
-            })
-
         graph
             .selectAll('path')
-            .data(getPieChartData(this.props.data))
+            .data(pieChart(this.props.data))
             .enter()
             .append('path')
             .attr('stroke', '#efefef')
             .attr('stroke-width', 2)
             .attr('fill', (d) => d.data.name)
             .attr('opacity', 1)
-            .attr('d', (d) => arcPath(d))
+            .attr('d', (d) => this.getArcPathFxn(this.state.marginRadius)(d))
             .on('mouseenter', this.handleMouseOver)
             .on('mouseout', this.handleMouseOut)
+    }
+
+    getArcPathFxn = (radiusAdjustment = 0) => {
+        const width = this.state.boundingRect.width
+        const height = this.state.boundingRect.height
+        const radius = Math.min(height, width) / 2
+        return arc()
+            .outerRadius(radius + radiusAdjustment)
+            .innerRadius(0)
     }
 
     handleMouseOver = (d, i, m) => {
         const currentSelection = select(m[i])
 
-        currentSelection.transition().duration(500).attr('opacity', 0.2)
+        const widenedArcPathFxn = this.getArcPathFxn()
+        const center = widenedArcPathFxn.centroid(d)
+        center[0] += this.state.boundingRect.width / 2
+        center[1] += this.state.boundingRect.height / 2
+
+        currentSelection
+            .transition()
+            .duration(500)
+            .attr('opacity', 0.4)
+            .attr('d', widenedArcPathFxn(d))
 
         select('#pie-chart-tooltip-label').text(
             `${d.data.name}: ${d.data.count}`
         )
         select('#pie-chart-tooltip').attr(
             'style',
-            `left: ${d.data.center[0] - this.tooltipBoundingRect.width / 2}px;
-        top: ${d.data.center[1] - this.tooltipBoundingRect.height / 2}px;
+            `left: ${center[0] - this.tooltipBoundingRect.width / 2}px;
+        top: ${center[1] - this.tooltipBoundingRect.height / 2}px;
         opacity:1`
         )
     }
@@ -112,7 +121,11 @@ class PieChart extends Component {
     handleMouseOut = (d, i, m) => {
         const currentSelection = select(m[i])
 
-        currentSelection.transition().duration(200).attr('opacity', 1)
+        currentSelection
+            .transition()
+            .duration(200)
+            .attr('opacity', 1)
+            .attr('d', this.getArcPathFxn(this.state.marginRadius)(d))
 
         const currentTooltipStyleString = select('#pie-chart-tooltip').attr(
             'style'

@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 
 import { select, axisLeft, axisBottom, scaleLinear, scalePoint } from 'd3'
-import { debounce } from 'lodash'
 
 import './charts.css'
 
-class BarChart extends Component {
+class LollipopChart extends Component {
     constructor(props) {
         super(props)
 
@@ -20,54 +19,27 @@ class BarChart extends Component {
 
         this.state = {
             margin: this.defaultMargin,
-            boundingRect: {},
             loaded: false,
         }
     }
 
     componentDidMount() {
-        this.debouncedResize = debounce(this.handleCanvasResize, 100)
-        window.addEventListener('resize', this.debouncedResize, false)
-        this.debouncedResize()
-    }
-
-    componentDidUpdate() {
-        if (this.state.loaded) {
-            this.createChart()
-        }
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('resize', this.debouncedResize, false)
-    }
-
-    handleCanvasResize = () => {
-        const boundingRect = {
-            height: this.canvas.current.clientHeight,
-            width: this.canvas.current.clientWidth,
-        }
-        this.setState({ boundingRect, loaded: true })
-    }
-
-    cleanOldSvg = () => {
-        select('#barChartCanvas2').selectAll('svg').remove()
+        this.createChart()
     }
 
     createChart = () => {
-        console.log('Re-drawing (barChart2)')
-        this.cleanOldSvg()
+        console.log('Redrawing (Lollipop Chart)')
 
-        const width = this.state.boundingRect.width
-        const height = this.state.boundingRect.height
+        const height = this.canvas.current.clientHeight
+        const width = this.canvas.current.clientWidth
 
-        const svg = select('#barChartCanvas2')
+        const svg = select('#lollipopChart')
             .append('svg')
             .attr('viewBox', [0, 0, width, height])
 
-        const yScaleFullDomain = this.props.data
-            .map((obj) => obj.count)
-            .sort((a, b) => b - a)
+        const yScaleFullDomain = this.props.data.map((obj) => obj.count)
 
+        //using yAxis for exact chart points (taking margin into account)
         const yAxisRange = [
             height - this.state.margin.bottom,
             this.state.margin.top,
@@ -149,13 +121,9 @@ class BarChart extends Component {
 
     render() {
         return (
-            <div
-                id="barChartCanvas2"
-                className="canvas"
-                ref={this.canvas}
-            ></div>
+            <div id="lollipopChart" className="canvas" ref={this.canvas}></div>
         )
     }
 }
 
-export default BarChart
+export default LollipopChart

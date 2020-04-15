@@ -1,24 +1,31 @@
 import React from 'react'
 import './App.css'
 
+import LollipopChart from './components/LollipopChart'
 import BarChart from './components/BarChart'
-import BarChart2 from './components/BarChart2'
+import PieChart from './components/PieChart'
 
-import { skittleData } from './mock-data/barChart'
+import { skittleData } from './mock-data/skittlesData'
 
 function App() {
     return (
         <div>
             <div>
-                <div>Bar Chart (single draw)</div>
+                <div>Lollipop Chart (single draw)</div>
+                <div className="chart-container">
+                    <LollipopChart data={skittleData} />
+                </div>
+            </div>
+            <div>
+                <div>Bar Chart (redraw on resize)</div>
                 <div className="chart-container">
                     <BarChart data={skittleData} />
                 </div>
             </div>
             <div>
-                <div>Bar Chart 2 (redraw on resize)</div>
+                <div>Pie Chart (tooltip)</div>
                 <div className="chart-container">
-                    <BarChart2 data={skittleData} />
+                    <PieChart data={skittleData} />
                 </div>
             </div>
         </div>

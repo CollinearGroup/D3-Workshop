@@ -30,7 +30,13 @@ export const appendGroup = (d3Selection, transformString) => {
  * @param {number} cy - (optional, defaults to 0) y coordinate of the center of the circle
  * @param {string} fill - (optional, defaults to '#000') fill color
  */
-export const appendCircle = (d3Selection, r, cx = 0, cy = 0, fill = '#000') => {
+export const appendCircle = ({
+    d3Selection,
+    r,
+    cx = 0,
+    cy = 0,
+    fill = '#000',
+}) => {
     assertList(
         [d3Selection, 'd3Selection is required field'],
         [r !== undefined, 'r is required field']

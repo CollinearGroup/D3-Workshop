@@ -56,13 +56,13 @@ class LollipopChart extends Component {
 
         const chart = appendGroup(svg)
         const datum = chart.selectAll('circle').data(this.props.data).enter()
-        appendCircle(
-            datum,
-            '5px',
-            (d) => xScale(d.name),
-            (d) => yScale(d.count),
-            (d) => d.name
-        )
+        appendCircle({
+            d3Selection: datum,
+            r: '5px',
+            cx: (d) => xScale(d.name),
+            cy: (d) => yScale(d.count),
+            fill: (d) => d.name,
+        })
         appendLine(
             datum,
             (d) => xScale(d.name),

@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 
-import LollipopChart from './components/LollipopChart'
+import LollipopChart from './components/LollipopChartD3Abstracted'
 import BarChart from './components/BarChart'
 import PieChart from './components/PieChart'
 

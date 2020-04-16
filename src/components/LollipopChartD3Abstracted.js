@@ -54,29 +54,29 @@ class LollipopChart extends Component {
         const xScale = getScalePoint(xScaleFullDomain, xAxisRange, 0.6)
         const xAxis = axisBottom(xScale)
 
-        const chart = appendGroup(svg)
+        const chart = appendGroup({ selection: svg })
         const datum = chart.selectAll('circle').data(this.props.data).enter()
         appendCircle({
-            d3Selection: datum,
+            selection: datum,
             r: '5px',
             cx: (d) => xScale(d.name),
             cy: (d) => yScale(d.count),
             fill: (d) => d.name,
         })
-        appendLine(
-            datum,
-            (d) => xScale(d.name),
-            (d) => yScale(d.count),
-            (d) => xScale(d.name),
-            yScale(0),
-            '5px',
-            (d) => d.name
-        )
+        appendLine({
+            selection: datum,
+            x1: (d) => xScale(d.name),
+            y1: (d) => yScale(d.count),
+            x2: (d) => xScale(d.name),
+            y2: yScale(0),
+            strokeWidth: '5px',
+            stroke: (d) => d.name,
+        })
 
-        const xAxisGroup = appendGroup(
-            svg,
-            `translate(0, ${height - this.state.margin.bottom})`
-        )
+        const xAxisGroup = appendGroup({
+            selection: svg,
+            transform: `translate(0, ${height - this.state.margin.bottom})`,
+        })
         xAxisGroup
             .call(xAxis)
             .selectAll('text')
@@ -85,16 +85,16 @@ class LollipopChart extends Component {
             .attr('dy', '.15em')
             .attr('transform', 'rotate(-45)')
 
-        const yAxisGroup = appendGroup(
-            svg,
-            `translate(${this.state.margin.left}, 0)`
-        )
+        const yAxisGroup = appendGroup({
+            selection: svg,
+            transform: `translate(${this.state.margin.left}, 0)`,
+        })
         yAxisGroup.call(yAxis)
 
-        const yAxisGridlines = appendGroup(
-            svg,
-            `translate(${this.state.margin.left}, 0)`
-        )
+        const yAxisGridlines = appendGroup({
+            selection: svg,
+            transform: `translate(${this.state.margin.left}, 0)`,
+        })
         yAxisGridlines
             .attr('class', 'grid-lines')
             .call(

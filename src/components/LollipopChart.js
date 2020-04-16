@@ -19,7 +19,6 @@ class LollipopChart extends Component {
 
         this.state = {
             margin: this.defaultMargin,
-            loaded: false,
         }
     }
 

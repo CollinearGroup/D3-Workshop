@@ -68,7 +68,7 @@ class BarChart extends Component {
         const yScaleFullDomain = this.props.data.map((obj) => obj.count)
         const yMax = Math.max(...yScaleFullDomain)
 
-        //using yAxis to determine heights of rects (does not take margin into account)
+        //using yScale for relative heights (does not take margin into account)
         const yAxisRange = [
             0,
             height - this.state.margin.top - this.state.margin.bottom,

@@ -38,7 +38,7 @@ class LollipopChart extends Component {
 
         const yScaleFullDomain = this.props.data.map((obj) => obj.count)
 
-        //using yAxis for exact chart points (taking margin into account)
+        //using yScale for exact chart points (taking margin into account)
         const yAxisRange = [
             height - this.state.margin.bottom,
             this.state.margin.top,

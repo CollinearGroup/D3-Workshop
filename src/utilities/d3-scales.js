@@ -6,7 +6,7 @@ const getScalePoint = (fullDomain, range, padding = 0) => {
         [fullDomain, 'fullDomain is a required argument'],
         [Array.isArray(fullDomain), 'fullDomain must be of type array'],
         [range, 'range is a required argument'],
-        [Array.isArray(fullDomain), 'range must be of type array']
+        [Array.isArray(range), 'range must be of type array']
     )
     return scalePoint().domain(fullDomain).range(range).padding(padding)
 }
@@ -16,7 +16,7 @@ const getLinearScale = (fullDomain, range) => {
         [fullDomain, 'fullDomain is a required argument'],
         [Array.isArray(fullDomain), 'fullDomain must be of type array'],
         [range, 'range is a required argument'],
-        [Array.isArray(fullDomain), 'range must be of type array']
+        [Array.isArray(range), 'range must be of type array']
     )
     return scaleLinear()
         .domain([Math.min(...fullDomain), Math.max(...fullDomain)])
@@ -28,7 +28,7 @@ const getBandScale = (fullDomain, range, paddingOuter = 0) => {
         [fullDomain, 'fullDomain is a required argument'],
         [Array.isArray(fullDomain), 'fullDomain must be of type array'],
         [range, 'range is a required argument'],
-        [Array.isArray(fullDomain), 'range must be of type array']
+        [Array.isArray(range), 'range must be of type array']
     )
     return scaleBand()
         .domain(fullDomain)

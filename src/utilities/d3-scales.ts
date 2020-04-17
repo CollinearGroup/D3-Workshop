@@ -1,45 +1,32 @@
 import { scaleLinear, scalePoint, scaleBand } from 'd3'
-import { assertList } from './assersions'
 
-const getScalePoint = (
-    fullDomain: string[],
-    range: [number, number],
-    padding: number = 0
-) => {
-    assertList(
-        [fullDomain !== undefined, 'fullDomain is a required argument'],
-        [Array.isArray(fullDomain), 'fullDomain must be of type array'],
-        [range !== undefined, 'range is a required argument'],
-        [Array.isArray(range), 'range must be of type array']
-    )
-    return scalePoint().domain(fullDomain).range(range).padding(padding)
+interface GetScalePoint {
+    domain: string[]
+    range: [number, number]
+    padding?: number
+}
+const getScalePoint = ({ domain, range, padding = 0 }: GetScalePoint) => {
+    return scalePoint().domain(domain).range(range).padding(padding)
 }
 
-const getLinearScale = (fullDomain: number[], range: [number, number]) => {
-    assertList(
-        [fullDomain !== undefined, 'fullDomain is a required argument'],
-        [Array.isArray(fullDomain), 'fullDomain must be of type array'],
-        [range !== undefined, 'range is a required argument'],
-        [Array.isArray(range), 'range must be of type array']
-    )
+interface GetLinearScale {
+    domain: number[]
+    range: [number, number]
+}
+const getLinearScale = ({ domain, range }: GetLinearScale) => {
     return scaleLinear()
-        .domain([Math.min(...fullDomain), Math.max(...fullDomain)])
+        .domain([Math.min(...domain), Math.max(...domain)])
         .range(range)
 }
 
-const getBandScale = (
-    fullDomain: string[],
-    range: [number, number],
-    paddingOuter: number = 0
-) => {
-    assertList(
-        [fullDomain !== undefined, 'fullDomain is a required argument'],
-        [Array.isArray(fullDomain), 'fullDomain must be of type array'],
-        [range !== undefined, 'range is a required argument'],
-        [Array.isArray(range), 'range must be of type array']
-    )
+interface GetBandScale {
+    domain: string[]
+    range: [number, number]
+    paddingOuter?: number
+}
+const getBandScale = ({ domain, range, paddingOuter = 0 }: GetBandScale) => {
     return scaleBand()
-        .domain(fullDomain)
+        .domain(domain)
         .rangeRound(range)
         .paddingOuter(paddingOuter)
 }

@@ -43,7 +43,10 @@ class LollipopChart extends Component {
             height - this.state.margin.bottom,
             this.state.margin.top,
         ]
-        const yScale = getLinearScale([...yScaleFullDomain, 0], yAxisRange)
+        const yScale = getLinearScale({
+            domain: [...yScaleFullDomain, 0],
+            range: yAxisRange,
+        })
         const yAxis = axisLeft(yScale).ticks(5)
 
         const xScaleFullDomain = this.props.data.map((obj) => obj.name)
@@ -51,7 +54,11 @@ class LollipopChart extends Component {
             this.state.margin.left,
             width - this.state.margin.right,
         ]
-        const xScale = getScalePoint(xScaleFullDomain, xAxisRange, 0.6)
+        const xScale = getScalePoint({
+            domain: xScaleFullDomain,
+            range: xAxisRange,
+            padding: 0.6,
+        })
         const xAxis = axisBottom(xScale)
 
         const chart = appendGroup({ selection: svg })

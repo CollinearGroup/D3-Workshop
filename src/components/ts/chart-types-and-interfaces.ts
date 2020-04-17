@@ -15,7 +15,7 @@ export type BoundingRect = {
 }
 
 export type Props = {
-    data: [Datum]
+    data: Datum[]
 }
 export interface State {
     margin: Margin

@@ -1,11 +1,11 @@
 import React from 'react'
 import './App.css'
 
-import LollipopChart from './components/LollipopChartD3Abstracted'
+import LollipopChart from './components/ts/LollipopChart'
 // import LollipopChart from './components/LollipopChart'
-import BarChart from './components/BarChartD3Abstracted'
+import BarChart from './components/ts/BarChart'
 // import BarChart from './components/BarChart'
-import PieChart from './components/PieChart'
+import PieChart from './components/js/PieChart'
 
 import { skittleData } from './mock-data/skittlesData'
 

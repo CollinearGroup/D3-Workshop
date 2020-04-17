@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { select, axisLeft, axisBottom } from 'd3'
-import './charts.css'
+import '../charts.css'
 
-import { getLinearScale, getScalePoint } from '../utilities/d3-scales'
-import { appendGroup, appendCircle, appendLine } from '../utilities/svg'
+import { getLinearScale, getScalePoint } from '../../utilities/d3-scales'
+import { appendGroup, appendCircle, appendLine } from '../../utilities/svg'
 import { Datum, Margin, Props, State } from './chart-types-and-interfaces'
 
 class LollipopChart extends Component<Props, State> {

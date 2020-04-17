@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { select, axisLeft, axisBottom, scaleLinear, scalePoint } from 'd3'
 
-import './charts.css'
+import '../charts.css'
 
 class LollipopChart extends Component {
     constructor(props) {

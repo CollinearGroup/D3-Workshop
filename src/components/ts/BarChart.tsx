@@ -1,12 +1,25 @@
 import React, { Component } from 'react'
 
-import { select, axisLeft, axisBottom, scaleLinear, scaleBand } from 'd3'
+import { select, axisLeft, axisBottom } from 'd3'
 import { debounce } from 'lodash'
 
-import './charts.css'
+import { getBandScale, getLinearScale } from '../../utilities/d3-scales'
+import { appendGroup, appendRect } from '../../utilities/svg'
+import {
+    Datum,
+    Margin,
+    Props,
+    RedrawOnResizeState,
+} from './chart-types-and-interfaces'
 
-class BarChart extends Component {
-    constructor(props) {
+import '../charts.css'
+
+class BarChart extends Component<Props, RedrawOnResizeState> {
+    canvas: React.RefObject<HTMLDivElement>
+    defaultMargin: Margin
+    debouncedResize: () => void
+
+    constructor(props: Props) {
         super(props)
 
         this.canvas = React.createRef()
@@ -17,16 +30,16 @@ class BarChart extends Component {
             bottom: 100,
             left: 100,
         }
+        this.debouncedResize = debounce(this.handleCanvasResize, 100)
 
         this.state = {
             margin: this.defaultMargin,
-            boundingRect: {},
+            boundingRect: { width: 0, height: 0 },
             loaded: false,
         }
     }
 
     componentDidMount() {
-        this.debouncedResize = debounce(this.handleCanvasResize, 100)
         window.addEventListener('resize', this.debouncedResize, false)
         this.debouncedResize()
     }
@@ -43,8 +56,8 @@ class BarChart extends Component {
 
     handleCanvasResize = () => {
         const boundingRect = {
-            height: this.canvas.current.clientHeight,
-            width: this.canvas.current.clientWidth,
+            height: this.canvas.current ? this.canvas.current.clientHeight : 0,
+            width: this.canvas.current ? this.canvas.current.clientWidth : 0,
         }
         this.setState({ boundingRect, loaded: true })
     }
@@ -55,7 +68,6 @@ class BarChart extends Component {
 
     createChart = () => {
         console.log('Redrawing (Bar Chart)')
-
         this.cleanOldSvg()
 
         const width = this.state.boundingRect.width
@@ -63,49 +75,54 @@ class BarChart extends Component {
 
         const svg = select('#barChartCanvas')
             .append('svg')
-            .attr('viewBox', [0, 0, width, height])
+            .attr('viewBox', `0, 0, ${width}, ${height}`)
 
         const yScaleFullDomain = this.props.data.map((obj) => obj.count)
         const yMax = Math.max(...yScaleFullDomain)
 
         //using yScale for relative heights (does not take margin into account)
-        const yAxisRange = [
+        const yAxisRange: [number, number] = [
             0,
             height - this.state.margin.top - this.state.margin.bottom,
         ]
-        const yScale = scaleLinear().domain([yMax, 0]).range(yAxisRange)
+        const yScale = getLinearScale({
+            domain: [0, yMax],
+            range: yAxisRange,
+            isDomainFlipped: true,
+        })
         const yAxis = axisLeft(yScale).ticks(5)
 
-        const xAxisRange = [
+        const xAxisRange: [number, number] = [
             0,
             width - this.state.margin.right - this.state.margin.left,
         ]
-        const xScale = scaleBand()
-            .domain(this.props.data.map((obj) => obj.name))
-            .rangeRound(xAxisRange)
-            .paddingOuter(0.6)
+        const xScale = getBandScale({
+            domain: this.props.data.map((obj) => obj.name),
+            range: xAxisRange,
+            paddingOuter: 0.6,
+        })
         const xAxis = axisBottom(xScale)
 
-        const chart = svg
-            .append('g')
-            .attr(
-                'transform',
-                `translate(${this.state.margin.left}, ${this.state.margin.top})`
-            )
-        const graph = chart.append('g')
+        const chart = appendGroup({
+            selection: svg,
+            transform: `translate(${this.state.margin.left}, ${this.state.margin.top})`,
+        })
+        const graph = appendGroup({ selection: chart })
         const datum = graph.selectAll('rect').data(this.props.data).enter()
 
-        datum
-            .append('rect')
-            .attr('x', (d) => xScale(d.name))
-            .attr('y', (d) => yScale(d.count))
-            .attr('width', xScale.bandwidth())
-            .attr('height', (d) => yScale(0) - yScale(d.count))
-            .attr('fill', (d) => d.name)
+        appendRect({
+            selection: datum,
+            x: (d: Datum) => xScale(d.name),
+            y: (d: Datum) => yScale(d.count),
+            width: xScale.bandwidth(),
+            height: (d: Datum) => yScale(0) - yScale(d.count),
+            fill: (d: Datum) => d.name,
+        })
 
-        const xAxisGroup = chart
-            .append('g')
-            .attr('transform', `translate(0, ${yScale(0)})`)
+        const xAxisGroup = appendGroup({
+            selection: chart,
+            transform: `translate(0, ${yScale(0)})`,
+        })
 
         xAxisGroup
             .call(xAxis)
@@ -115,10 +132,10 @@ class BarChart extends Component {
             .attr('dy', '.15em')
             .attr('transform', 'rotate(-45)')
 
-        const yAxisGroup = chart.append('g')
+        const yAxisGroup = appendGroup({ selection: chart })
         yAxisGroup.call(yAxis)
 
-        const yAxisGridlines = chart.append('g')
+        const yAxisGridlines = appendGroup({ selection: chart })
         yAxisGridlines
             .attr('class', 'grid-lines')
             .call(
@@ -130,7 +147,7 @@ class BarChart extends Component {
                             this.state.margin.right
                         )
                     )
-                    .tickFormat('')
+                    .tickFormat(() => '')
             )
     }
 

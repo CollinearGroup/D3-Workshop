@@ -4,23 +4,7 @@ import './charts.css'
 
 import { getLinearScale, getScalePoint } from '../utilities/d3-scales'
 import { appendGroup, appendCircle, appendLine } from '../utilities/svg'
-
-type Datum = {
-    name: string
-    count: number
-}
-type Margin = {
-    top: number
-    right: number
-    bottom: number
-    left: number
-}
-type Props = {
-    data: [Datum]
-}
-type State = {
-    margin: Margin
-}
+import { Datum, Margin, Props, State } from './chart-types-and-interfaces'
 
 class LollipopChart extends Component<Props, State> {
     canvas: React.RefObject<HTMLDivElement>

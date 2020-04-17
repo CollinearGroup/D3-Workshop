@@ -66,3 +66,26 @@ export const appendLine = ({
     addSVGAttribute(line, 'stroke', stroke)
     return line
 }
+
+interface AppendRect extends AppendSVGElement {
+    x: number | undefined | Function //x coordinate of the top left corner of the rect
+    y: number | undefined | Function //y coordinate of the top left corner of the rect
+    width: number | undefined | Function //width of the rect
+    height: number | undefined | Function //height of the rect
+}
+export const appendRect = ({
+    selection,
+    x,
+    y,
+    width,
+    height,
+    fill,
+}: AppendRect) => {
+    const rect = selection.append('rect')
+    addSVGAttribute(rect, 'x', x)
+    addSVGAttribute(rect, 'y', y)
+    addSVGAttribute(rect, 'width', width)
+    addSVGAttribute(rect, 'height', height)
+    addSVGAttribute(rect, 'fill', fill)
+    return rect
+}

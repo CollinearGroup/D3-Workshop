@@ -12,11 +12,17 @@ const getScalePoint = ({ domain, range, padding = 0 }: GetScalePoint) => {
 interface GetLinearScale {
     domain: number[]
     range: [number, number]
+    isDomainFlipped?: boolean
 }
-const getLinearScale = ({ domain, range }: GetLinearScale) => {
-    return scaleLinear()
-        .domain([Math.min(...domain), Math.max(...domain)])
-        .range(range)
+const getLinearScale = ({
+    domain,
+    range,
+    isDomainFlipped = false,
+}: GetLinearScale) => {
+    const scaleDomain = isDomainFlipped
+        ? [Math.max(...domain), Math.min(...domain)]
+        : [Math.min(...domain), Math.max(...domain)]
+    return scaleLinear().domain(scaleDomain).range(range)
 }
 
 interface GetBandScale {

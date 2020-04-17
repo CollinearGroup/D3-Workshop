@@ -5,10 +5,28 @@ import './charts.css'
 import { getLinearScale, getScalePoint } from '../utilities/d3-scales'
 import { appendGroup, appendCircle, appendLine } from '../utilities/svg'
 
-class LollipopChart extends Component {
-    constructor(props) {
-        super(props)
+type Datum = {
+    name: string
+    count: number
+}
+type Margin = {
+    top: number
+    right: number
+    bottom: number
+    left: number
+}
+type Props = {
+    data: [Datum]
+}
+type State = {
+    margin: Margin
+}
 
+class LollipopChart extends Component<Props, State> {
+    canvas: React.RefObject<HTMLDivElement>
+    defaultMargin: Margin
+    constructor(props: Props) {
+        super(props)
         this.canvas = React.createRef()
 
         this.defaultMargin = {
@@ -30,28 +48,37 @@ class LollipopChart extends Component {
     createChart = () => {
         console.log('Redrawing (Lollipop Chart)')
 
-        const height = this.canvas.current.clientHeight
-        const width = this.canvas.current.clientWidth
+        const height = this.canvas.current
+            ? this.canvas.current.clientHeight
+            : 0
+        const width = this.canvas.current ? this.canvas.current.clientWidth : 0
 
         const svg = select('#lollipopChart')
             .append('svg')
-            .attr('viewBox', [0, 0, width, height])
+            .attr('viewBox', `0, 0, ${width}, ${height}`)
 
         const yScaleFullDomain = this.props.data.map((obj) => obj.count)
         //using yScale for exact chart points (taking margin into account)
-        const yAxisRange = [
+        const yAxisRange: [number, number] = [
             height - this.state.margin.bottom,
             this.state.margin.top,
         ]
-        const yScale = getLinearScale([...yScaleFullDomain, 0], yAxisRange)
+        const yScale = getLinearScale({
+            domain: [...yScaleFullDomain, 0],
+            range: yAxisRange,
+        })
         const yAxis = axisLeft(yScale).ticks(5)
 
         const xScaleFullDomain = this.props.data.map((obj) => obj.name)
-        const xAxisRange = [
+        const xAxisRange: [number, number] = [
             this.state.margin.left,
             width - this.state.margin.right,
         ]
-        const xScale = getScalePoint(xScaleFullDomain, xAxisRange, 0.6)
+        const xScale = getScalePoint({
+            domain: xScaleFullDomain,
+            range: xAxisRange,
+            padding: 0.6,
+        })
         const xAxis = axisBottom(xScale)
 
         const chart = appendGroup({ selection: svg })
@@ -59,18 +86,18 @@ class LollipopChart extends Component {
         appendCircle({
             selection: datum,
             r: '5px',
-            cx: (d) => xScale(d.name),
-            cy: (d) => yScale(d.count),
-            fill: (d) => d.name,
+            cx: (d: Datum) => xScale(d.name),
+            cy: (d: Datum) => yScale(d.count),
+            fill: (d: Datum) => d.name,
         })
         appendLine({
             selection: datum,
-            x1: (d) => xScale(d.name),
-            y1: (d) => yScale(d.count),
-            x2: (d) => xScale(d.name),
+            x1: (d: Datum) => xScale(d.name),
+            y1: (d: Datum) => yScale(d.count),
+            x2: (d: Datum) => xScale(d.name),
             y2: yScale(0),
             strokeWidth: '5px',
-            stroke: (d) => d.name,
+            stroke: (d: Datum) => d.name,
         })
 
         const xAxisGroup = appendGroup({
@@ -95,19 +122,14 @@ class LollipopChart extends Component {
             selection: svg,
             transform: `translate(${this.state.margin.left}, 0)`,
         })
-        yAxisGridlines
-            .attr('class', 'grid-lines')
-            .call(
-                yAxis
-                    .tickSize(
-                        -(
-                            width -
-                            this.state.margin.left -
-                            this.state.margin.right
-                        )
-                    )
-                    .tickFormat('')
-            )
+        yAxisGridlines.attr('class', 'grid-lines').call(
+            yAxis
+                .tickSize(
+                    -(width - this.state.margin.left - this.state.margin.right)
+                )
+                //ensures that gridlines do not have additional yAxisLabel
+                .tickFormat(() => '')
+        )
     }
 
     render() {

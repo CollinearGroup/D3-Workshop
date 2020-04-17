@@ -1,23 +1,42 @@
 import { assertList } from './assersions'
 
+interface AppendSVGElement {
+    selection: d3.Selection<any, any, HTMLElement, any>
+    transform: string //group
+    r: string //circle
+    cx: string //circle
+    cy: string //circle
+    x1: string //line
+    y1: string //line
+    x2: string //line
+    y2: string //line
+    fill: string
+    strokeWidth: string
+    stroke: string
+}
+
 /**
  * Adds SVG Attribute to d3Selection
- * @param {*} d3Selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
+ * @param {d3.Selection<any, any, HTMLElement, any>} d3Selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
  * @param {string} type - (required) Attribute type
- * @param {*} value - (required) Attribute value
+ * @param {string} value - (required) Attribute value
  */
-export const addSVGAttribute = (d3Selection, type, value) => {
+export const addSVGAttribute = (
+    d3Selection: d3.Selection<any, any, HTMLElement, any>,
+    type: string,
+    value: string
+) => {
     d3Selection.attr(type, value)
 }
 
 /**
  * Appends an SVG Group to a d3Selection, meant to make transforming easier
  * @param {object} object - contains the following fields
- * @param {*} object.selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
- * @param {*} object.transform - (optional) transform string ex. `translate(${this.state.margin.left}, 0)`
+ * @param {d3.Selection<any, any, HTMLElement, any>} object.selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
+ * @param {string} object.transform - (optional) transform string ex. `translate(${this.state.margin.left}, 0)`
  */
-export const appendGroup = ({ selection, transform }) => {
-    assertList([selection, 'selection is required field'])
+export const appendGroup = ({ selection, transform }: AppendSVGElement) => {
+    assertList([selection !== undefined, 'selection is required field'])
     const group = selection.append('g')
     addSVGAttribute(group, 'transform', transform)
     return group
@@ -26,7 +45,7 @@ export const appendGroup = ({ selection, transform }) => {
 /**
  * Appends a Circle SVG to a d3Selection
  * @param {object} object - contains the following fields
- * @param {*} object.selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
+ * @param {d3.Selection<any, any, HTMLElement, any>} object.selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
  * @param {string} object.r - (required) length value for the circle radius
  * @param {number} object.cx - (optional, defaults to 0) x coordinate of the center of the circle
  * @param {number} object.cy - (optional, defaults to 0) y coordinate of the center of the circle
@@ -35,12 +54,12 @@ export const appendGroup = ({ selection, transform }) => {
 export const appendCircle = ({
     selection,
     r,
-    cx = 0,
-    cy = 0,
+    cx = '0',
+    cy = '0',
     fill = '#000',
-}) => {
+}: AppendSVGElement) => {
     assertList(
-        [selection, 'selection is required field'],
+        [selection !== undefined, 'selection is required field'],
         [r !== undefined, 'r is required field']
     )
     const circle = selection.append('circle')
@@ -54,11 +73,11 @@ export const appendCircle = ({
 /**
  * Appends a Line SVG to a d3Selection extending from (x1,y1) to (x2, y2)
  * @param {object} object - contains the following fields
- * @param {*} object.selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
- * @param {number} object.x1 - (required) x coordinate of the starting point of the line
- * @param {number} object.y1 - (required) y coordinate of the starting point of the line
- * @param {number} object.x2 - (required) x coordinate of the end point of the line
- * @param {number} object.y2 - (required) y coordinate of the end point of the line
+ * @param {d3.Selection<any, any, HTMLElement, any>} object.selection - (required) D3 selection, generally from d3.select(<selector>) or d3Selection.append(<svg-type>)
+ * @param {string} object.x1 - (required) x coordinate of the starting point of the line
+ * @param {string} object.y1 - (required) y coordinate of the starting point of the line
+ * @param {string} object.x2 - (required) x coordinate of the end point of the line
+ * @param {string} object.y2 - (required) y coordinate of the end point of the line
  * @param {string} object.strokeWidth - (optional, defaults to '1px') line width value
  * @param {string} object.stroke - (optional, defaults to '#000') line color
  */
@@ -70,9 +89,9 @@ export const appendLine = ({
     y2,
     strokeWidth = '1px',
     stroke = '#000',
-}) => {
+}: AppendSVGElement) => {
     assertList(
-        [selection, 'selection is required field'],
+        [selection !== undefined, 'selection is required field'],
         [x1 !== undefined, 'x1 is required field'],
         [y1 !== undefined, 'y1 is required field'],
         [x2 !== undefined, 'x2 is required field'],

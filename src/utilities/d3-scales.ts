@@ -7,9 +7,9 @@ const getScalePoint = (
     padding: number = 0
 ) => {
     assertList(
-        [!!fullDomain, 'fullDomain is a required argument'],
+        [fullDomain !== undefined, 'fullDomain is a required argument'],
         [Array.isArray(fullDomain), 'fullDomain must be of type array'],
-        [!!range, 'range is a required argument'],
+        [range !== undefined, 'range is a required argument'],
         [Array.isArray(range), 'range must be of type array']
     )
     return scalePoint().domain(fullDomain).range(range).padding(padding)
@@ -17,9 +17,9 @@ const getScalePoint = (
 
 const getLinearScale = (fullDomain: number[], range: [number, number]) => {
     assertList(
-        [!!fullDomain, 'fullDomain is a required argument'],
+        [fullDomain !== undefined, 'fullDomain is a required argument'],
         [Array.isArray(fullDomain), 'fullDomain must be of type array'],
-        [!!range, 'range is a required argument'],
+        [range !== undefined, 'range is a required argument'],
         [Array.isArray(range), 'range must be of type array']
     )
     return scaleLinear()
@@ -33,9 +33,9 @@ const getBandScale = (
     paddingOuter: number = 0
 ) => {
     assertList(
-        [!!fullDomain, 'fullDomain is a required argument'],
+        [fullDomain !== undefined, 'fullDomain is a required argument'],
         [Array.isArray(fullDomain), 'fullDomain must be of type array'],
-        [!!range, 'range is a required argument'],
+        [range !== undefined, 'range is a required argument'],
         [Array.isArray(range), 'range must be of type array']
     )
     return scaleBand()

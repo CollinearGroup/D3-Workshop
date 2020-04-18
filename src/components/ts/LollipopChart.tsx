@@ -36,6 +36,7 @@ class LollipopChart extends Component<Props, State> {
             ? this.canvas.current.clientHeight
             : 0
         const width = this.canvas.current ? this.canvas.current.clientWidth : 0
+        const margin = this.state.margin || this.defaultMargin
 
         const svg = select('#lollipopChart')
             .append('svg')
@@ -44,8 +45,8 @@ class LollipopChart extends Component<Props, State> {
         const yScaleFullDomain = this.props.data.map((obj) => obj.count)
         //using yScale for exact chart points (taking margin into account)
         const yAxisRange: [number, number] = [
-            height - this.state.margin.bottom,
-            this.state.margin.top,
+            height - margin.bottom,
+            margin.top,
         ]
         const yScale = getLinearScale({
             domain: [...yScaleFullDomain, 0],
@@ -54,10 +55,7 @@ class LollipopChart extends Component<Props, State> {
         const yAxis = axisLeft(yScale).ticks(5)
 
         const xScaleFullDomain = this.props.data.map((obj) => obj.name)
-        const xAxisRange: [number, number] = [
-            this.state.margin.left,
-            width - this.state.margin.right,
-        ]
+        const xAxisRange: [number, number] = [margin.left, width - margin.right]
         const xScale = getScalePoint({
             domain: xScaleFullDomain,
             range: xAxisRange,
@@ -86,7 +84,7 @@ class LollipopChart extends Component<Props, State> {
 
         const xAxisGroup = appendGroup({
             selection: svg,
-            transform: `translate(0, ${height - this.state.margin.bottom})`,
+            transform: `translate(0, ${height - margin.bottom})`,
         })
         xAxisGroup
             .call(xAxis)
@@ -98,19 +96,17 @@ class LollipopChart extends Component<Props, State> {
 
         const yAxisGroup = appendGroup({
             selection: svg,
-            transform: `translate(${this.state.margin.left}, 0)`,
+            transform: `translate(${margin.left}, 0)`,
         })
         yAxisGroup.call(yAxis)
 
         const yAxisGridlines = appendGroup({
             selection: svg,
-            transform: `translate(${this.state.margin.left}, 0)`,
+            transform: `translate(${margin.left}, 0)`,
         })
         yAxisGridlines.attr('class', 'grid-lines').call(
             yAxis
-                .tickSize(
-                    -(width - this.state.margin.left - this.state.margin.right)
-                )
+                .tickSize(-(width - margin.left - margin.right))
                 //ensures that gridlines do not have additional yAxisLabel
                 .tickFormat(() => '')
         )

@@ -18,7 +18,8 @@ export type Props = {
     data: Datum[]
 }
 export interface State {
-    margin: Margin
+    margin?: Margin
+    marginRadius?: number
 }
 
 export interface RedrawOnResizeState extends State {

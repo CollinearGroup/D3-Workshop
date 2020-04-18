@@ -72,6 +72,7 @@ class BarChart extends Component<Props, RedrawOnResizeState> {
 
         const width = this.state.boundingRect.width
         const height = this.state.boundingRect.height
+        const margin = this.state.margin || this.defaultMargin
 
         const svg = select('#barChartCanvas')
             .append('svg')
@@ -83,7 +84,7 @@ class BarChart extends Component<Props, RedrawOnResizeState> {
         //using yScale for relative heights (does not take margin into account)
         const yAxisRange: [number, number] = [
             0,
-            height - this.state.margin.top - this.state.margin.bottom,
+            height - margin.top - margin.bottom,
         ]
         const yScale = getLinearScale({
             domain: [0, yMax],
@@ -94,7 +95,7 @@ class BarChart extends Component<Props, RedrawOnResizeState> {
 
         const xAxisRange: [number, number] = [
             0,
-            width - this.state.margin.right - this.state.margin.left,
+            width - margin.right - margin.left,
         ]
         const xScale = getBandScale({
             domain: this.props.data.map((obj) => obj.name),
@@ -105,7 +106,7 @@ class BarChart extends Component<Props, RedrawOnResizeState> {
 
         const chart = appendGroup({
             selection: svg,
-            transform: `translate(${this.state.margin.left}, ${this.state.margin.top})`,
+            transform: `translate(${margin.left}, ${margin.top})`,
         })
         const graph = appendGroup({ selection: chart })
         const datum = graph.selectAll('rect').data(this.props.data).enter()
@@ -140,13 +141,7 @@ class BarChart extends Component<Props, RedrawOnResizeState> {
             .attr('class', 'grid-lines')
             .call(
                 yAxis
-                    .tickSize(
-                        -(
-                            width -
-                            this.state.margin.left -
-                            this.state.margin.right
-                        )
-                    )
+                    .tickSize(-(width - margin.left - margin.right))
                     .tickFormat(() => '')
             )
     }
